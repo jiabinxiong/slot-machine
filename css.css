@@ -12,12 +12,19 @@ ul li {
 }
 
 .slot-machine-list {
-	position: relative;
-	margin: 100px 0 0 100px;
-	width: 200px;
+	margin: 100px 0 0 50px;
+	width: 400px;
 	height: 100px;
 	overflow: hidden;
 	background-color: red;
+}
+
+.slot-machine-block {
+	position: relative;
+	float: left;
+	width: 100px;
+	height: 100px;
+	margin: 0 10px 0 0;
 }
 
 .slot-machine-list .list {

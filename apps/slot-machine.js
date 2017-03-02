@@ -5,62 +5,30 @@ class SlotMachine extends Component {
 		super();
 		this.state = {
 			top: 0,
-			speed: 100,
+			speed: 30,
 			highest: false,
-			timers: 0,
-			n: 1,
+			frequency: 0,
+			lengthNum: 14,
 			testDataArr: ['a', 'b', 'c']
 		}
 	}
 
 	componentDidMount() {
-		this.timedCount();
-
-		console.log(this.state.speed);
+		this.stateTimer = setTimeout(() => {
+			this.timedCount();
+		}, this.props.time[this.props.timeIndex])
 	}
+
+	componentWillUnmount() {
+		clearTimeout(this.stateTimer);
+		clearTimeout(this.timer);
+	}
+
 	timedCount() {
+		let lengthNumState;	
+
 		this.timer = setTimeout(() => {
 			this.timedCount();
-
-			this.setState({
-				top: this.state.top + 8
-			});
-
-			if(this.state.speed == 10) {
-				this.setState({
-					highest: true
-				});
-			} 
-
-			if(this.state.highest) {
-				if(this.state.timers > 24) {
-					if(this.state.speed == 100) {
-						this.setState({
-							speed: 100
-						});
-
-						if(this.state.top >= 110) {
-							clearTimeout(this.timer);	
-						} 
-
-					} else {
-						this.setState({
-							speed: ++this.state.speed
-						});
-					}	
-
-				} else {
-					this.setState({
-						speed: 10
-					});
-				}
-
-			} else {
-				this.setState({
-					speed: --this.state.speed
-				});
-			}
-			
 
 			if(this.state.top >= 110) {
 				let testDataArrCop = this.state.testDataArr;
@@ -70,9 +38,34 @@ class SlotMachine extends Component {
 				this.setState({
 					top: 0,
 					testDataArr: testDataArrCop,
-					timers: ++this.state.timers
+					frequency: ++this.state.frequency
 				});
 			}			
+
+			if(this.state.frequency >= this.props.frequencyNum[this.props.timeIndex]) {
+				if(this.state.lengthNum == 0) {
+					this.setState({
+						top: this.state.top + 1
+					});
+
+					if(parseInt(this.state.top) >= 110) {
+						this.setState({
+							top: 110
+						});
+						clearTimeout(this.timer);
+					}
+				} else {
+					this.setState({
+						top: this.state.top + ((--this.state.lengthNum) / 14) 
+					});
+				}
+
+			} else {
+				
+				this.setState({
+					top: this.state.top + ((++this.state.lengthNum) / 14) 
+				});
+			}
 
 		}, this.state.speed);
 
@@ -80,24 +73,23 @@ class SlotMachine extends Component {
 
 	render() {
 		let liEml = (data, index) => {
-			return <li key={index}>{data}</li>
-		}
+			return this.props.li(data, index)
+		}	
 
 
 		return (
-			<div className="slot-machine-cnt">
-				<div className="slot-machine-list">
-					<ul className="list" style={{ top: -this.state.top + 'px'}}>
-						{
-							this.state.testDataArr.map((data, index) => {
-								return liEml(data, index);
-							}) 
-						}
-					</ul>
-				</div>
-			</div>	
+			<div className="slot-machine-block">
+				<ul className="list" style={{ top: -this.state.top + 'px'}}>
+					{
+						this.state.testDataArr.map((data, index) => {
+							return liEml(data, index);
+						}) 
+					}
+				</ul>
+			</div>
 		)
 	}
 }
+
 
 export default SlotMachine
